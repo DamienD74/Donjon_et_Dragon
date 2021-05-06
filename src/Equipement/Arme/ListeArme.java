@@ -7,11 +7,12 @@ public class ListeArme extends Arme{
 
     public static List<Arme> listeArme = new ArrayList<>();
 
-    public static void AjouterArme(String nom, int degat)
+    public static void ajouterArme(String nom, int degat)
     {
         Arme arme = new Arme();
-        arme.SetNom(nom);
-        arme.SetDegat(degat);
+        arme.setNom(nom);
+        arme.setDegat(degat);
+        arme.setClasse("Arme");
         listeArme.add(arme);
     }   
 }

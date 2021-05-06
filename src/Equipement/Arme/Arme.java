@@ -6,12 +6,12 @@ public class Arme extends Equipement{
    
     private int degat;
 
-    public int GetDegat()
+    public int getDegat()
     {
         return this.degat;
     }
 
-    public void SetDegat(int degat)
+    public void setDegat(int degat)
     {
         this.degat = degat;
     }

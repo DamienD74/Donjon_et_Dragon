@@ -7,11 +7,12 @@ public class ListeBouclier extends Bouclier{
     
     public static List<Bouclier> listeBouclier = new ArrayList<>();
 
-    public static void AjouterBouclier(String nom, int armure)
+    public static void ajouterBouclier(String nom, int armure)
     {
         Bouclier bouclier = new Bouclier();
-        bouclier.SetNom(nom);
-        bouclier.SetArmure(armure);
+        bouclier.setNom(nom);
+        bouclier.setArmure(armure);
+        bouclier.setClasse("Bouclier");
         listeBouclier.add(bouclier);
     }  
 }

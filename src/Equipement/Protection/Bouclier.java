@@ -6,12 +6,12 @@ public class Bouclier extends Equipement{
     
     private int armure;
 
-    public int GetArmure()
+    public int getArmure()
     {
         return this.armure;
     }
 
-    public void SetArmure(int armure)
+    public void setArmure(int armure)
     {
         this.armure = armure;
     }

@@ -7,22 +7,22 @@ public class Consommable extends Equipement{
     private boolean estDegat;
     private int puissance;
 
-    public boolean GetEstDegat()
+    public boolean getEstDegat()
     {
         return this.estDegat;
     }
 
-    public void SetEstDegat(boolean estDegat)
+    public void setEstDegat(boolean estDegat)
     {
         this.estDegat = estDegat;
     }
 
-    public int GetPuissance()
+    public int getPuissance()
     {
         return this.puissance;
     }
 
-    public void SetPuissance(int puissance)
+    public void setPuissance(int puissance)
     {
         this.puissance = puissance;
     }

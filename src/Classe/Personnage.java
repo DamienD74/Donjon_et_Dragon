@@ -1,5 +1,8 @@
 package Classe;
 
+import Ennemi.Ennemi;
+import Equipement.Equipement;
+
 public abstract class Personnage {
     
     private String nom;
@@ -10,77 +13,106 @@ public abstract class Personnage {
 
     private int degat;
 
-    private String classe;
     private String image;
-
-    public String GetNom()
+    
+	public void subirDegatBrut(int degatSubit)
+    {
+    	setHp(getHp() - degatSubit);
+    	if (getHp() <= 0)
+    	{
+            System.out.println("");
+            System.out.println("Vous êtes Mort");
+    	}
+    }
+    
+    public void soin(int soin)
+    {
+    	setHp(getHp() + soin);
+    	if (getHp() > getHpMax())
+    	{
+    		setHp(getHpMax());
+    	}
+    }
+    
+    public void augmentationHpMax(int hpAugmenter)
+    {
+    	setHpMax(getHpMax() + hpAugmenter);
+    	setHp(getHp() + hpAugmenter);
+    }
+    
+    public abstract void montrerStat();
+    
+    public abstract void useEquipement(Equipement e);
+    
+    public abstract boolean canUseEquipement(Equipement e);
+    
+    public abstract boolean subirDegat(int degat);
+    
+    public abstract boolean utiliserSecondaire(Personnage perso, Ennemi ennemi);
+    
+    public String getNom()
     {
         return this.nom;
     }
 
-    public void SetNom(String nom)
+    public void setNom(String nom)
     {
         this.nom = nom;
     }
 
-    public int GetHp()
+    public int getHp()
     {
         return this.hp;
     }
 
-    public void SetHpDepart(int min, int max)
+    public void setHp(int hp)
+    {
+    	this.hp = hp;
+    }
+    
+    public void setHpDepart(int min, int max)
     {
         int range = (max - min) + 1;
         this.hp = (int)(Math.random() * range) + min;
     }
+   
 
-    public int GetHpMax()
+    public int getHpMax()
     {
         return this.hpMax;
     }
 
-    public void SetHpMax(int hpMax)
+    public void setHpMax(int hpMax)
     {
         this.hpMax = hpMax;
     }
 
-    public int GetHpMin()
+    public int getHpMin()
     {
         return this.hpMin;
     }
 
-    public void SetHpMin(int hpMin)
+    public void setHpMin(int hpMin)
     {
         this.hpMin = hpMin;
     }
 
-    public int GetDegat()
+    public int getDegat()
     {
         return this.degat;
     }
 
-    public void SetDegat(int degat)
+    public void setDegat(int degat)
     {
         this.degat = degat;
     }
-    
-    public String GetClasse()
-    {
-        return this.classe;
-    }
 
-    public String SetClasse(String classe)
-    {
-        return this.classe = classe;
-    }
-
-
-    public String GetImage()
+    public String getImage()
     {
         return this.image;
     }
 
-    public void SetImage(String image)
+    public void setImage(String image)
     {
         this.image = image;
     }
