@@ -14,43 +14,58 @@ public class Magicien extends Personnage {
     private int puissancePotion;
     private boolean potionEstDegat;
 
-    public void initialisation(Magicien magicien)
+    public Magicien (String nom, int hp, int hpMax, int hpMin, int degat, String image, String sort, String potion, boolean potionEstDegat, int puissancePotion)
     {
-        magicien.setImage("/img/Guerrier.jpg");
-        magicien.setHpMax(25);
-        magicien.setHpMin(20);
-
-        magicien.setHpDepart(magicien.getHpMin(), magicien.getHpMax());
+    	super(nom, hp, hpMax, hpMin, degat, image);
+    	this.sort = sort;
+    	this.potion = potion;
+    	this.puissancePotion = puissancePotion;
+    	this.potionEstDegat = potionEstDegat;
+    }
+    
+	public static Magicien initialisation(String nom)
+    {
+		String image = "/img/Magicien.jpg";
+		int hpMax = 35;
+		int hpMin = 30;
+	
+        int range = (hpMax - hpMin) + 1;
+        int hp = (int)(Math.random() * range) + hpMin;
         
-        magicien.setHpMax(magicien.getHp());
-
-        magicien.choixSortDepart(magicien);
-        magicien.choixPotionDepart(magicien);
+        hpMax = hp;
+        
+		Arme sortObj = choixSortDepart();
+		Consommable potionObj = choixPotionDepart();
+		
+		String sort = sortObj.getNom();
+		int degat = sortObj.getDegat();
+		
+		String potion = potionObj.getNom();
+		int puissancePotion = potionObj.getPuissance();
+		boolean potionEstDegat = potionObj.getEstDegat();
+        
+        Magicien magicien = new Magicien(nom, hp, hpMax, hpMin, degat, image, sort, potion, potionEstDegat, puissancePotion);
+        return magicien;
     }
 
-    public Magicien choixSortDepart(Magicien magicien)
+    public static Arme choixSortDepart()
     {
         int max = 2;
         int min = 0;
         int range = (max - min) + 1;
         int nombre = (int)(Math.random() * range) + min;
 
-        magicien.setSort(ListeSort.listeSort.get(nombre).getNom());
-        magicien.setDegat(ListeSort.listeSort.get(nombre).getDegat());
-        return magicien;
+        return ListeSort.listeSort.get(nombre);
     }
 
-    public Magicien choixPotionDepart(Magicien magicien)
+    public static Consommable choixPotionDepart()
     {
         int max = 1;
         int min = 0;
         int range = (max - min) + 1;
         int nombre = (int)(Math.random() * range) + min;
 
-        magicien.setPotion(ListePotion.listePotion.get(nombre).getNom());
-        magicien.setPuissancePotion(ListePotion.listePotion.get(nombre).getPuissance());
-        magicien.setPotionEstDegat(ListePotion.listePotion.get(nombre).getEstDegat());
-        return magicien;
+        return ListePotion.listePotion.get(nombre);
     }
     
     public void montrerStat()

@@ -10,6 +10,7 @@ import Equipement.Equipement;
 import Equipement.Arme.ListeArme;
 import Equipement.Arme.ListeSort;
 import Equipement.Protection.ListeBouclier;
+import Exception.EntreeInvalideException;
 import Equipement.Consommable.ListePotion;
 import Ennemi.Ennemi;
 import Ennemi.ListeEnnemi;
@@ -58,9 +59,13 @@ public class GameManager{
         {
             try {
     			gm.menu();
-    		} catch (Exception e) {
+    		} catch (IllegalStateException e) {
+    			 hasReqExit = true;
     			 System.out.println(e);
-    		}
+    			 e.printStackTrace();
+    			 } catch (EntreeInvalideException e) {
+   			 System.out.println(e);
+   		    }
         }
         while(!hasReqExit);
     }
@@ -167,22 +172,27 @@ public class GameManager{
     	SalleEvenement.ajouterSalleEvenement("Oh non un piège des haches tombes sur vous ! Vous perdez 6 points de vie", false, true, false, 6);
     }
 
-    void menu () throws Exception
+    void menu () throws IllegalStateException, EntreeInvalideException
     {
     	do
     	{        	
     		System.out.println("Choisissez NewGame ou Quittez (vous pouvez quittez a tout moment), vous pourrez utiliser Menu a tout moment pour revenir au menu");
 
             String value = sc.nextLine();
-
+            
+            if (value == null)
+            {
+            	throw new IllegalStateException("Sc fermée");
+            }
+            
             if (value.startsWith("NewGame"))
             {
                 do
                 {
                     try {
                         choixClasse();
-            		} catch (Exception e) {
-            			 System.out.println(e);
+            		} catch (EntreeInvalideException e) {
+           			     System.out.println(e);
             		}
                 }
                 while(estChoixClasse);
@@ -193,12 +203,12 @@ public class GameManager{
             }
             else
             {
-            	throw new Exception("Entrée invalide");
+            	throw new EntreeInvalideException("Entrée invalide");
             }
     	}while(!hasReqExit);     
     }
 
-    void avantPartie() throws Exception
+    void avantPartie() throws IllegalStateException, EntreeInvalideException
     {
     	do
     	{
@@ -212,15 +222,21 @@ public class GameManager{
 	      
 	        String value = sc.nextLine();
 	        
+            if (value == null)
+            {
+            	throw new IllegalStateException("Sc fermée");
+            }
+	        
 	        if (value.startsWith("Ajouter"))
 	        {
                 do
                 {
                     try {
-                        choixClasse();
-            		} catch (Exception e) {
-            			 System.out.println(e);
-            		}
+                        choixClasse();            
+            		} 
+                    catch (EntreeInvalideException e){
+           			     System.out.println(e);
+                    }
                 }
                 while(estChoixClasse);
 	        }
@@ -234,7 +250,7 @@ public class GameManager{
 	        			return;
 	          		}
 	          	}
-            	throw new Exception("Entrée invalide");
+            	throw new EntreeInvalideException("Entrée invalide");
 	        }
 	        else if (value.startsWith("Liste"))
 	        {
@@ -277,12 +293,12 @@ public class GameManager{
 	        			return;
 	        		}
 	          	}
-            	throw new Exception("Entrée invalide");
+            	throw new EntreeInvalideException("Entrée invalide");
 	        }
     	}while(!hasReqExit && estAvantPartie);     
     }
 
-    void choixClasse () throws Exception
+    void choixClasse () throws IllegalStateException, EntreeInvalideException
     {
     	do
     	{
@@ -291,6 +307,11 @@ public class GameManager{
             System.out.println("Choisissez votre classe Guerrier ou Magicien ?");
 
             String value = sc.nextLine();
+            
+            if (value == null)
+            {
+            	throw new IllegalStateException("Sc fermée");
+            }           
 
             if (value.startsWith("Guerrier"))
             {
@@ -311,21 +332,23 @@ public class GameManager{
             }
             else
             {
-            	throw new Exception("Entrée invalide");
+            	throw new EntreeInvalideException("Entrée invalide");
             }
     	}while(!hasReqExit);    
     }
 
-    void creationGuerrier()
+    void creationGuerrier() throws IllegalStateException
     {   	
     	do
     	{
-            Guerrier guerrier = new Guerrier();
-            guerrier.initialisation(guerrier);
-
             System.out.println("");
             System.out.println("Vous avez choisi guerrier. Quelles et votre nom ? ");
             String value = sc.nextLine();
+            
+            if (value == null)
+            {
+            	throw new IllegalStateException("Sc fermée");
+            }
 
             if (value.startsWith("Quittez"))
             {
@@ -333,7 +356,7 @@ public class GameManager{
             }
             else
             {
-                guerrier.setNom(value);
+                Guerrier guerrier = Guerrier.initialisation(value);
                 System.out.println("");
                 System.out.println("Initialisation de vos statistique et objet de départ :");
                 
@@ -345,7 +368,7 @@ public class GameManager{
                 {
                     try {
                         avantPartie();
-            		} catch (Exception e) {
+            		} catch (EntreeInvalideException e) {
             			 System.out.println(e);
             		}
                 }
@@ -354,16 +377,18 @@ public class GameManager{
     	}while(!hasReqExit);    
     }
 
-    void creationMagicien()
+    void creationMagicien() throws IllegalStateException
     {
     	do
     	{
-            Magicien magicien = new Magicien();
-            magicien.initialisation(magicien);
-
             System.out.println("");
             System.out.println("Vous avez choisi un magicien. Quelles et votre nom ? ");
             String value = sc.nextLine();
+            
+            if (value == null)
+            {
+            	throw new IllegalStateException("Sc fermée");
+            }
 
             if (value.startsWith("Quittez"))
             {
@@ -371,7 +396,7 @@ public class GameManager{
             }
             else
             {
-                magicien.setNom(value);
+                Magicien magicien = Magicien.initialisation(value);
 
                 System.out.println("");
                 System.out.println("Initialisation de vos statistique et objet de départ :");
@@ -384,7 +409,7 @@ public class GameManager{
                 {
                     try {
                         avantPartie();
-            		} catch (Exception e) {
+            		} catch (EntreeInvalideException e) {
             			 System.out.println(e);
             		}
                 }
@@ -406,7 +431,7 @@ public class GameManager{
         salleSelectionne = false;
     }
     
-    void jeu(Personnage perso)
+    void jeu(Personnage perso) throws IllegalStateException
     {
     	estPartie = true;
 		nbSalle = 0;
@@ -422,7 +447,7 @@ public class GameManager{
         		{
               		 try {
                    		commencement();
-               		} catch (Exception e) {
+               		} catch (EntreeInvalideException e) {
                			 System.out.println(e);
                		}
         		} while (estDansSalle);
@@ -435,7 +460,7 @@ public class GameManager{
         		{
               		 try {
                  		salleBoss(perso);
-               		} catch (Exception e) {
+               		} catch (EntreeInvalideException e) {
                			 System.out.println(e);
                		}
         		} while (estDansSalle || !ennemiVaincu);
@@ -458,7 +483,7 @@ public class GameManager{
             		{
                   		 try {
                          	salleVide(perso);
-                   		} catch (Exception e) {
+                   		} catch (EntreeInvalideException e) {
                    			 System.out.println(e);
                    		}
             		} while (estDansSalle);
@@ -470,7 +495,7 @@ public class GameManager{
             		{
                   		 try {
                          	salleObjet(perso);
-                   		} catch (Exception e) {
+                   		} catch (EntreeInvalideException e) {
                    			 System.out.println(e);
                    		}
             		} while (estDansSalle);
@@ -482,7 +507,7 @@ public class GameManager{
             		{
                   		 try {
                          	salleEvenement(perso);
-                   		} catch (Exception e) {
+                   		} catch (EntreeInvalideException e) {
                    			 System.out.println(e);
                    		}
             		} while (estDansSalle);
@@ -494,7 +519,7 @@ public class GameManager{
             		{
                   		 try {
                          	salleEnnemi(perso);
-                   		} catch (Exception e) {
+                   		} catch (EntreeInvalideException e) {
                    			 System.out.println(e);
                    		}
             		} while (estDansSalle);          
@@ -504,7 +529,7 @@ public class GameManager{
 
     }
     
-    void commencement() throws Exception
+    void commencement() throws IllegalStateException, EntreeInvalideException
     {
         System.out.println("");
         System.out.println("Vous arrivez devant l'entrée d'un donjon !");
@@ -512,6 +537,11 @@ public class GameManager{
         System.out.println("Fuir - Fuir lâchement le donjon");
         
         String value = sc.nextLine();
+        
+        if (value == null)
+        {
+        	throw new IllegalStateException("Sc fermée");
+        }
         
         if (value.startsWith("Entrer"))
         {
@@ -536,11 +566,11 @@ public class GameManager{
         }
         else
         {
-        	throw new Exception("Entrée invalide");
+        	throw new EntreeInvalideException("Entrée invalide");
         }
     }
     
-    void salleVide(Personnage perso) throws Exception
+    void salleVide(Personnage perso) throws IllegalStateException ,EntreeInvalideException
     {	
     	if (!salleSelectionne)
     	{
@@ -562,6 +592,11 @@ public class GameManager{
         System.out.println("Info - Voir les Statistiques");
         System.out.println("Fuir - Fuir lâchement le donjon");
         String value = sc.nextLine();
+        
+        if (value == null)
+        {
+        	throw new IllegalStateException("Sc fermée");
+        }
         
         if (value.startsWith("Potion") && perso instanceof Magicien && ((Magicien) perso).getPotion() != null && !((Magicien) perso).getPotionEstDegat())
         {
@@ -598,11 +633,11 @@ public class GameManager{
         }
         else
         {
-        	throw new Exception("Entrée invalide");
+        	throw new EntreeInvalideException("Entrée invalide");
         }
     }
     
-    void salleEnnemi(Personnage perso) throws Exception
+    void salleEnnemi(Personnage perso) throws IllegalStateException, EntreeInvalideException
     {
     	if (!salleSelectionne)
     	{
@@ -645,6 +680,11 @@ public class GameManager{
         System.out.println("Info - Voir les Statistiques");
         System.out.println("Fuir - Fuir lâchement le donjon");
         String value = sc.nextLine();
+        
+        if (value == null)
+        {
+        	throw new IllegalStateException("Sc fermée");
+        }
      
         if (value.startsWith("Combattre") && !ennemiVaincu)
         {
@@ -653,7 +693,7 @@ public class GameManager{
     		{
           		 try {
                  	combat(perso, ennemiActuelle);
-           		} catch (Exception e) {
+           		} catch (EntreeInvalideException e) {
            			 System.out.println(e);
            		}
     		} while (!ennemiVaincu);   
@@ -702,11 +742,11 @@ public class GameManager{
         }
         else
         {
-        	throw new Exception("Entrée invalide");
+        	throw new EntreeInvalideException("Entrée invalide");
         }
     }
     
-    void salleObjet(Personnage perso) throws Exception
+    void salleObjet(Personnage perso) throws IllegalStateException, EntreeInvalideException
     {   
     	if (!salleSelectionne)
     	{
@@ -745,6 +785,11 @@ public class GameManager{
         System.out.println("Info - Voir les Statistiques");
         System.out.println("Fuir - Fuir lâchement le donjon");
         String value = sc.nextLine();
+        
+        if (value == null)
+        {
+        	throw new IllegalStateException("Sc fermée");
+        }
         
         if (value.startsWith("Equiper") && perso.canUseEquipement(equipement) && objetDisponible)
         {
@@ -787,11 +832,11 @@ public class GameManager{
         }
         else
         {
-        	throw new Exception("Entrée invalide");
+        	throw new EntreeInvalideException("Entrée invalide");
         }
     }
     
-    void salleEvenement(Personnage perso) throws Exception
+    void salleEvenement(Personnage perso) throws IllegalStateException, EntreeInvalideException
     {
     	if (!salleSelectionne)
     	{
@@ -826,64 +871,72 @@ public class GameManager{
         {
             System.out.println("Potion - Utiliser votre potion");    
         }
-        System.out.println("Avancer - Avancer à la salle suivante");
-        System.out.println("Info - Voir les Statistiques");
-        System.out.println("Fuir - Fuir lâchement le donjon");
-        String value = sc.nextLine();
-    	
-        if (value.startsWith("Utiliser") && (salleEvenement.getSalleSoin() || salleEvenement.getSalleBonusVie()) && !evenementUtiliser)
+        if (perso.getHp() > 0)
         {
-        	if (salleEvenement.getSalleSoin())
-        	{
-        		perso.soin(salleEvenement.getPuissance());
-        	}
-        	else
-        	{
-        		perso.augmentationHpMax(salleEvenement.getPuissance());
-        	}
-        	evenementUtiliser = true;
-        	return;
-        }
-        else if (value.startsWith("Potion") && perso instanceof Magicien && ((Magicien) perso).getPotion() != null && !((Magicien) perso).getPotionEstDegat())
-        {
-        	((Magicien) perso).utiliserPotionSoin();
-        }
-        else if (value.startsWith("Avancer"))
-        {
-            estDansSalle = false;
-            salleSelectionne = false;
-        	return;
-        }
-        else if (value.startsWith("Fuir"))
-        {
-            estDansSalle = false;
-        	estPartie = false;
-            salleSelectionne = false;
-        	return;
-        }
-        else if (value.startsWith("Info"))
-        {
-        	perso.montrerStat();
-        	return;
-        }
-        else if (value.startsWith("Quittez"))
-        {
-        	quittez();
-        }
-        else if (value.startsWith("Menu"))
-        {
-            estDansSalle = false;
-        	estPartie = false;
-            salleSelectionne = false;
-        	return;
-        }
-        else
-        {
-        	throw new Exception("Entrée invalide");
-        }
+            System.out.println("Avancer - Avancer à la salle suivante");
+            System.out.println("Info - Voir les Statistiques");
+            System.out.println("Fuir - Fuir lâchement le donjon");
+            String value = sc.nextLine();
+            
+            if (value == null)
+            {
+            	throw new IllegalStateException("Sc fermée");
+            }
+            
+            if (value.startsWith("Utiliser") && (salleEvenement.getSalleSoin() || salleEvenement.getSalleBonusVie()) && !evenementUtiliser)
+            {
+            	if (salleEvenement.getSalleSoin())
+            	{
+            		perso.soin(salleEvenement.getPuissance());
+            	}
+            	else
+            	{
+            		perso.augmentationHpMax(salleEvenement.getPuissance());
+            	}
+            	evenementUtiliser = true;
+            	return;
+            }
+            else if (value.startsWith("Potion") && perso instanceof Magicien && ((Magicien) perso).getPotion() != null && !((Magicien) perso).getPotionEstDegat())
+            {
+            	((Magicien) perso).utiliserPotionSoin();
+            }
+            else if (value.startsWith("Avancer"))
+            {
+                estDansSalle = false;
+                salleSelectionne = false;
+            	return;
+            }
+            else if (value.startsWith("Fuir"))
+            {
+                estDansSalle = false;
+            	estPartie = false;
+                salleSelectionne = false;
+            	return;
+            }
+            else if (value.startsWith("Info"))
+            {
+            	perso.montrerStat();
+            	return;
+            }
+            else if (value.startsWith("Quittez"))
+            {
+            	quittez();
+            }
+            else if (value.startsWith("Menu"))
+            {
+                estDansSalle = false;
+            	estPartie = false;
+                salleSelectionne = false;
+            	return;
+            }
+            else
+            {
+            	throw new EntreeInvalideException("Entrée invalide");
+            }
+        }    
     }
     
-    void salleBoss(Personnage perso) throws Exception
+    void salleBoss(Personnage perso) throws IllegalStateException, EntreeInvalideException
     {
     	if (!salleSelectionne)
     	{
@@ -926,6 +979,11 @@ public class GameManager{
         System.out.println("Info - Voir les Statistiques");
         System.out.println("Fuir - Fuir lâchement le donjon");
         String value = sc.nextLine();
+        
+        if (value == null)
+        {
+        	throw new IllegalStateException("Sc fermée");
+        }
      
         if (value.startsWith("Combattre") && !ennemiVaincu)
         {
@@ -938,9 +996,13 @@ public class GameManager{
            			 System.out.println(e);
            		}
     		} while (!ennemiVaincu); 
-    
-            System.out.println("");
-            System.out.println("Félicitation vous avez vaincu le donjon !");
+    	
+    		if (perso.getHp() > 0)
+    		{
+                System.out.println("");
+                System.out.println("Félicitation vous avez vaincu le donjon !");
+    		}
+
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
@@ -984,11 +1046,11 @@ public class GameManager{
         }
         else
         {
-        	throw new Exception("Entrée invalide");
+        	throw new EntreeInvalideException("Entrée invalide");
         }
     }
     
-    void combat(Personnage perso, Ennemi ennemi) throws Exception
+    void combat(Personnage perso, Ennemi ennemi) throws IllegalStateException, EntreeInvalideException
     {
         System.out.println("");
         System.out.println("Attaquer - Attaquer l'ennemi");     
@@ -1000,6 +1062,11 @@ public class GameManager{
         System.out.println("Info - Voir les Statistiques");
         System.out.println("Ennemi - Voir les Statistiques de l'ennemi");
         String value = sc.nextLine();
+        
+        if (value == null)
+        {
+        	throw new IllegalStateException("Sc fermée");
+        }
 
         if (value.startsWith("Attaquer"))
         {
@@ -1032,7 +1099,7 @@ public class GameManager{
         }
         else
         {
-        	throw new Exception("Entrée invalide");
+        	throw new EntreeInvalideException("Entrée invalide");
         }
     }
     

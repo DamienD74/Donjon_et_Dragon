@@ -4,7 +4,12 @@ import Equipement.Equipement;
 
 public class Arme extends Equipement{
    
-    private int degat;
+	private int degat;
+	
+    public Arme(String nom, String classe, int degat) {
+		super(nom, classe);
+		this.degat = degat;
+	}
 
     public int getDegat()
     {

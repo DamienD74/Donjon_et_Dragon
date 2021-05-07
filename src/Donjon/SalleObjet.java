@@ -7,16 +7,19 @@ import Equipement.Equipement;
 
 public class SalleObjet extends Salle{
 
-    public static List<SalleObjet> listeSalleObjet = new ArrayList<>();
+	public static List<SalleObjet> listeSalleObjet = new ArrayList<>();
     
 	private Equipement equipement;
 
+    public SalleObjet(String typeSalle, String messageSalle, Equipement equipement) 
+    {
+		super(typeSalle, messageSalle);
+		this.equipement = equipement;
+	}
+
 	public static void ajouterSalleObjet(String message, Equipement equipement)
 	{
-		SalleObjet salleObjet = new SalleObjet();
-		salleObjet.setTypeSalle("SalleObjet");
-		salleObjet.setMessageSalle(message);
-		salleObjet.setEquipement(equipement);
+		SalleObjet salleObjet = new SalleObjet("SalleObjet", message, equipement);
 		listeSalleObjet.add(salleObjet);
 	}
 	

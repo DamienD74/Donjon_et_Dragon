@@ -13,42 +13,56 @@ public class Guerrier extends Personnage {
     private String bouclier;
     private int armure;
     
-	public void initialisation(Guerrier guerrier)
+    public Guerrier (String nom, int hp, int hpMax, int hpMin, int degat, String image, String arme, String bouclier, int armure)
     {
-        guerrier.setImage("/img/Guerrier.jpg");
-        guerrier.setHpMax(35);
-        guerrier.setHpMin(30);
-
-        guerrier.setHpDepart(guerrier.getHpMin(), guerrier.getHpMax());
+    	super(nom, hp, hpMax, hpMin, degat, image);
+    	this.arme = arme;
+    	this.bouclier = bouclier;
+    	this.armure = armure;
+    }
+    
+	public static Guerrier initialisation(String nom)
+    {
+		String image = "/img/Guerrier.jpg";
+		int hpMax = 35;
+		int hpMin = 30;
+	
+        int range = (hpMax - hpMin) + 1;
+        int hp = (int)(Math.random() * range) + hpMin;
         
-        guerrier.setHpMax(guerrier.getHp());
-
-        guerrier.choixArmeDepart(guerrier);
-        guerrier.choixBouclierDepart(guerrier);
+        hpMax = hp;
+        
+		Arme armeObj = choixArmeDepart();
+		Bouclier bouclierObj = choixBouclierDepart();
+		
+		String arme = armeObj.getNom();
+		int degat = armeObj.getDegat();
+		
+		String bouclier = bouclierObj.getNom();
+		int armure = bouclierObj.getArmure();
+        
+        Guerrier guerrier = new Guerrier(nom, hp, hpMax, hpMin, degat, image, arme, bouclier, armure);
+        return guerrier;
     }
 
-    public Guerrier choixArmeDepart(Guerrier guerrier)
+    public static Arme choixArmeDepart()
     {
         int max = 2;
         int min = 0;
         int range = (max - min) + 1;
         int nombre = (int)(Math.random() * range) + min;
 
-        guerrier.setArme(ListeArme.listeArme.get(nombre).getNom());
-        guerrier.setDegat(ListeArme.listeArme.get(nombre).getDegat());
-        return guerrier;
+        return ListeArme.listeArme.get(nombre);
     }
 
-    public Guerrier choixBouclierDepart(Guerrier guerrier)
+    public static Bouclier choixBouclierDepart()
     {
         int max = 2;
         int min = 0;
         int range = (max - min) + 1;
         int nombre = (int)(Math.random() * range) + min;
 
-        guerrier.setBouclier(ListeBouclier.listeBouclier.get(nombre).getNom());
-        guerrier.setArmure(ListeBouclier.listeBouclier.get(nombre).getArmure());
-        return guerrier;
+        return ListeBouclier.listeBouclier.get(nombre);
     }
     
     public void montrerStat()

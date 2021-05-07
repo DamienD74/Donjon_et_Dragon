@@ -5,6 +5,12 @@ public class Equipement {
     private String nom;
     private String classe;
 
+    public Equipement (String nom, String classe)
+    {
+    	this.nom = nom;
+    	this.classe = classe;
+    }
+    
     public String getNom()
     {
         return this.nom;

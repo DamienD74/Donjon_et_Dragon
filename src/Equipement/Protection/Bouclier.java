@@ -3,8 +3,13 @@ package Equipement.Protection;
 import Equipement.Equipement;
 
 public class Bouclier extends Equipement{
-    
-    private int armure;
+
+	private int armure;
+	
+    public Bouclier(String nom, String classe, int armure) {
+		super(nom, classe);
+		this.armure = armure;
+	}
 
     public int getArmure()
     {

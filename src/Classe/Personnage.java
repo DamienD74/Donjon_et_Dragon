@@ -15,14 +15,25 @@ public abstract class Personnage {
 
     private String image;
     
+    public Personnage(String nom, int hp, int hpMax, int hpMin, int degat, String image)
+    {
+    	this.nom = nom;
+    	this.hp = hp;
+    	this.hpMax = hpMax;
+    	this.hpMin = hpMin;
+    	this.degat = degat;
+    	this.image = image;
+    }
 	public void subirDegatBrut(int degatSubit)
     {
     	setHp(getHp() - degatSubit);
+    	
     	if (getHp() <= 0)
     	{
             System.out.println("");
             System.out.println("Vous êtes Mort");
     	}
+
     }
     
     public void soin(int soin)

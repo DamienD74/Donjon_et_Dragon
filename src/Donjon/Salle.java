@@ -5,6 +5,12 @@ public class Salle {
 	private String typeSalle;
 	private String messageSalle;
 
+	public Salle (String typeSalle, String messageSalle)
+	{
+		this.typeSalle = typeSalle;
+		this.messageSalle = messageSalle;
+	}
+	
 	public String getTypeSalle() 
 	{
 		return typeSalle;
