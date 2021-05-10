@@ -1,0 +1,10 @@
+{
+ "salleVide": ["0"],
+ "salleEnnemi": ["0", "1", "2", "3"],
+ "salleArme": ["0", "1", "2", "3", "4", "5"],
+ "salleBouclier": ["0" , "1", "2", "3", "4"],
+ "salleSort": ["0", "1", "2", "3", "4", "5"],
+ "sallePotion": ["0", "1", "2", "3"],
+ "salleEvenement": ["0", "2", "4"],
+ "boss": ["0"]
+}

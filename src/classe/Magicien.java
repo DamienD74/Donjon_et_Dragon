@@ -14,9 +14,18 @@ public class Magicien extends Personnage {
     private int puissancePotion;
     private boolean potionEstDegat;
 
-    public Magicien (String nom, int hp, int hpMax, int hpMin, int degat, String image, String sort, String potion, boolean potionEstDegat, int puissancePotion)
+    public Magicien (int id, String nom, int hp, int hpMax, int degat, String image, String sort, String potion, boolean potionEstDegat, int puissancePotion)
     {
-    	super(nom, hp, hpMax, hpMin, degat, image);
+    	super(id, nom, hp, hpMax, degat, image);
+    	this.sort = sort;
+    	this.potion = potion;
+    	this.puissancePotion = puissancePotion;
+    	this.potionEstDegat = potionEstDegat;
+    }
+    
+    public Magicien (String nom, int hp, int hpMax, int degat, String image, String sort, String potion, boolean potionEstDegat, int puissancePotion)
+    {
+    	super(nom, hp, hpMax, degat, image);
     	this.sort = sort;
     	this.potion = potion;
     	this.puissancePotion = puissancePotion;
@@ -44,7 +53,7 @@ public class Magicien extends Personnage {
 		int puissancePotion = potionObj.getPuissance();
 		boolean potionEstDegat = potionObj.getEstDegat();
         
-        Magicien magicien = new Magicien(nom, hp, hpMax, hpMin, degat, image, sort, potion, potionEstDegat, puissancePotion);
+        Magicien magicien = new Magicien(nom, hp, hpMax, degat, image, sort, potion, potionEstDegat, puissancePotion);
         return magicien;
     }
 

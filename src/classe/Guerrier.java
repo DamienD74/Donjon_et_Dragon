@@ -13,9 +13,17 @@ public class Guerrier extends Personnage {
     private String bouclier;
     private int armure;
     
-    public Guerrier (String nom, int hp, int hpMax, int hpMin, int degat, String image, String arme, String bouclier, int armure)
+    public Guerrier (int id, String nom, int hp, int hpMax, int degat, String image, String arme, String bouclier, int armure)
     {
-    	super(nom, hp, hpMax, hpMin, degat, image);
+    	super(id, nom, hp, hpMax, degat, image);
+    	this.arme = arme;
+    	this.bouclier = bouclier;
+    	this.armure = armure;
+    }
+    
+    public Guerrier (String nom, int hp, int hpMax, int degat, String image, String arme, String bouclier, int armure)
+    {
+    	super(nom, hp, hpMax, degat, image);
     	this.arme = arme;
     	this.bouclier = bouclier;
     	this.armure = armure;
@@ -41,7 +49,7 @@ public class Guerrier extends Personnage {
 		String bouclier = bouclierObj.getNom();
 		int armure = bouclierObj.getArmure();
         
-        Guerrier guerrier = new Guerrier(nom, hp, hpMax, hpMin, degat, image, arme, bouclier, armure);
+        Guerrier guerrier = new Guerrier(nom, hp, hpMax, degat, image, arme, bouclier, armure);
         return guerrier;
     }
 

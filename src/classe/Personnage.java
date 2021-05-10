@@ -5,6 +5,7 @@ import equipement.Equipement;
 
 public abstract class Personnage {
     
+	private int id;
     private String nom;
 
     private int hp;
@@ -15,15 +16,25 @@ public abstract class Personnage {
 
     private String image;
     
-    public Personnage(String nom, int hp, int hpMax, int hpMin, int degat, String image)
+    public Personnage(int id, String nom, int hp, int hpMax, int degat, String image)
+    {
+    	this.id = id;
+    	this.nom = nom;
+    	this.hp = hp;
+    	this.hpMax = hpMax;
+    	this.degat = degat;
+    	this.image = image;
+    }
+    
+    public Personnage(String nom, int hp, int hpMax, int degat, String image)
     {
     	this.nom = nom;
     	this.hp = hp;
     	this.hpMax = hpMax;
-    	this.hpMin = hpMin;
     	this.degat = degat;
     	this.image = image;
     }
+    
 	public void subirDegatBrut(int degatSubit)
     {
     	setHp(getHp() - degatSubit);
@@ -61,6 +72,14 @@ public abstract class Personnage {
     
     public abstract boolean utiliserSecondaire(Personnage perso, Ennemi ennemi);
     
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
     public String getNom()
     {
         return this.nom;

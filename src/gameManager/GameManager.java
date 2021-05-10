@@ -2,6 +2,10 @@ package gameManager;
 
 import java.util.Scanner;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import classe.*;
 import donjon.SalleEnnemi;
 import donjon.SalleEvenement;
@@ -19,11 +23,19 @@ import exception.EntreeInvalideException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public class GameManager{
 
     public List<Personnage> listePersonnage = new ArrayList<>();
+    private List<SalleVide> listeSalleVide = new ArrayList<>();
+    private List<SalleEnnemi> listeSalleEnnemi = new ArrayList<>();
+    private List<SalleEnnemi> listeSalleBoss = new ArrayList<>();
+    private List<SalleObjet> listeSalleObjet = new ArrayList<>();
+    private List<SalleEvenement> listeSalleEvenement = new ArrayList<>();
     private static boolean hasReqExit = false;
+    private boolean estNewGame = false;
     private boolean estChoixClasse = false;
     private boolean estAvantPartie = false;
     private boolean estPartie = false;
@@ -47,6 +59,14 @@ public class GameManager{
     	
     	GameManager gm = new GameManager();
     	
+        try {
+        	BaseDeDonnee.recupererHeros(gm);                
+    	}catch (ClassNotFoundException e){
+    		e.printStackTrace();
+    	}catch (SQLException e){
+    		e.printStackTrace();
+        }
+        
     	gm.initialisationArme();
     	gm.initialisationBouclier();
     	gm.initialisationSort();
@@ -78,7 +98,12 @@ public class GameManager{
         ListeArme.ajouterArme("Dague Rouillé", 7);
         ListeArme.ajouterArme("Bâton", 5);
         ListeArme.ajouterArme("Epée en fer", 12);
-        ListeArme.ajouterArme("Epée pourfendeuse", 16);
+        ListeArme.ajouterArme("Epée en Or", 16);
+        ListeArme.ajouterArme("Epée en Titane", 21);
+        ListeArme.ajouterArme("Epée Enchanté", 27);
+        ListeArme.ajouterArme("Epée Suprême", 36);
+        ListeArme.ajouterArme("Epée en Diamant", 42);
+        ListeArme.ajouterArme("Epée pourfendeuse", 64);
         ListeArme.ajouterArme("Excalibur", 80);
     }
 
@@ -88,8 +113,12 @@ public class GameManager{
         ListeBouclier.ajouterBouclier("Bouclier en bois", 2);
         ListeBouclier.ajouterBouclier("Bouclier Tonneau", 1);
         ListeBouclier.ajouterBouclier("Bouclier en fer", 4);
-        ListeBouclier.ajouterBouclier("Bouclier purificateur", 5);
-        ListeBouclier.ajouterBouclier("Bouclier d'égide", 8);
+        ListeBouclier.ajouterBouclier("Bouclier en Or", 5);
+        ListeBouclier.ajouterBouclier("Bouclier en Titane", 6);
+        ListeBouclier.ajouterBouclier("Bouclier Suprême", 7);
+        ListeBouclier.ajouterBouclier("Bouclier en Diamant", 8);
+        ListeBouclier.ajouterBouclier("Bouclier purificateur", 9);
+        ListeBouclier.ajouterBouclier("Bouclier d'égide", 10);
     }
 
     void initialisationSort()
@@ -99,6 +128,11 @@ public class GameManager{
         ListeSort.ajouterSort("Prout", 8);
         ListeSort.ajouterSort("Lame Spectrale", 16);
         ListeSort.ajouterSort("Rayon Saint", 24);
+        ListeSort.ajouterSort("Explosion", 31);
+        ListeSort.ajouterSort("Kill", 38);
+        ListeSort.ajouterSort("Glaciation", 46);
+        ListeSort.ajouterSort("Abîme", 57);
+        ListeSort.ajouterSort("Feu Sacré", 76);
         ListeSort.ajouterSort("Extermination", 100);
     }
 
@@ -106,8 +140,12 @@ public class GameManager{
     {
         ListePotion.ajouterPotion("Potion de soin", 10, false);
         ListePotion.ajouterPotion("Potion de degat", 20, true);
-        ListePotion.ajouterPotion("Potion de soin ultime", 20, false);
+        ListePotion.ajouterPotion("Grande potion de soin", 20, false);
         ListePotion.ajouterPotion("Potion d'explosion", 30, true);
+        ListePotion.ajouterPotion("Gigantesque potion de soin", 30, false);
+        ListePotion.ajouterPotion("Potion de purification", 70, true);
+        ListePotion.ajouterPotion("Potion de soin Ultime", 50, false);
+        ListePotion.ajouterPotion("Potion sacré", 110, true);
         ListePotion.ajouterPotion("Potion d'anihilation", 150, true);
     }
     
@@ -117,7 +155,17 @@ public class GameManager{
     	ListeEnnemi.ajouterEnnemi("Succube", 18, 4, "/img/Succube.png");
     	ListeEnnemi.ajouterEnnemi("Zombie", 32, 2, "/img/Zombie.jpg");
     	ListeEnnemi.ajouterEnnemi("Esprit", 14, 6, "/img/Esprit.png");
-    	ListeEnnemi.ajouterBoss("Tyrannoeil", 180, 10, "/img/Tyrannoeil.png");
+    	ListeEnnemi.ajouterEnnemi("ZombieArmée", 40, 4, "/img/ZombieArmee.png");
+    	ListeEnnemi.ajouterEnnemi("Démon Inférieur", 20, 5, "/img/DemonInferieur.jpg");
+    	ListeEnnemi.ajouterEnnemi("Vouivre", 28, 8, "/img/Vouivre.png");
+    	ListeEnnemi.ajouterEnnemi("Elfe Noir", 22, 10, "/img/ElfeNoir.png");
+    	ListeEnnemi.ajouterEnnemi("Démon", 34, 7, "/img/Demon.png");
+    	ListeEnnemi.ajouterEnnemi("Blob", 240, 2, "/img/Blob.jpg");
+    	ListeEnnemi.ajouterEnnemi("Mangeur d'Esprit", 64, 15, "/img/MangeurDesprit.jpg");
+    	ListeEnnemi.ajouterEnnemi("DémonSupérieur", 80, 12, "/img/DemonSuperieur.jpg");
+    	ListeEnnemi.ajouterBoss("Géant", 100, 7, "/img/Géant.png");
+    	ListeEnnemi.ajouterBoss("Tyrannoeil", 220, 10, "/img/Tyrannoeil.png");
+    	ListeEnnemi.ajouterBoss("Tiamat", 540, 22, "/img/UltimeDragon.jpg");
     }
     
     void initialisationSalleVide()
@@ -129,39 +177,67 @@ public class GameManager{
     {
     	SalleEnnemi.ajouterSalleEnnemi("Attention ! Un diablotin vous attaque !", ListeEnnemi.listeEnnemi.get(0));
     	SalleEnnemi.ajouterSalleEnnemi("Ne vous faites pas avoir par ses charmes une succube se trouve devant vous !", ListeEnnemi.listeEnnemi.get(1));
-    	SalleEnnemi.ajouterSalleEnnemi("Depuis quand un zombie peut tenir une épée attention !", ListeEnnemi.listeEnnemi.get(2));
+    	SalleEnnemi.ajouterSalleEnnemi("Un zombie fait attention il va te mordre !", ListeEnnemi.listeEnnemi.get(2));
     	SalleEnnemi.ajouterSalleEnnemi("C'est un des nombreux esprit qui hante ce donjon il est dangeureux !", ListeEnnemi.listeEnnemi.get(3));
-    	SalleEnnemi.ajouterSalleBoss("Quelle Catastrophe un Tyrannoeil ! Fuyez !", ListeEnnemi.listeBoss.get(0));
+    	SalleEnnemi.ajouterSalleEnnemi("Depuis quand un zombie peut tenir une épée attention !", ListeEnnemi.listeEnnemi.get(4));
+    	SalleEnnemi.ajouterSalleEnnemi("Un démon inférieur !", ListeEnnemi.listeEnnemi.get(5));
+    	SalleEnnemi.ajouterSalleEnnemi("Une vouivre ! Attention a ce petit dragon il est très aggressif", ListeEnnemi.listeEnnemi.get(6));
+    	SalleEnnemi.ajouterSalleEnnemi("Un elfe noir ! Il est surement la pour contrôler les vouivres du donjon !", ListeEnnemi.listeEnnemi.get(7));
+    	SalleEnnemi.ajouterSalleEnnemi("Un démon il doit y en avoir plein ici !", ListeEnnemi.listeEnnemi.get(8));
+    	SalleEnnemi.ajouterSalleEnnemi("C'est un blob ! il n'est pas très dangeureux mais très dure a tuer !", ListeEnnemi.listeEnnemi.get(9));
+    	SalleEnnemi.ajouterSalleEnnemi("Un mangeur d'esprit ! attention a ne pas te faire controler l'esprit !", ListeEnnemi.listeEnnemi.get(10));
+    	SalleEnnemi.ajouterSalleEnnemi("Attention c'est un démon supérieur !", ListeEnnemi.listeEnnemi.get(11));
+    	SalleEnnemi.ajouterSalleBoss("Un géant ici ? Comment est-il rentré ?", ListeEnnemi.listeBoss.get(0));
+    	SalleEnnemi.ajouterSalleBoss("Quelle Catastrophe un Tyrannoeil ! Fuyez !", ListeEnnemi.listeBoss.get(1));
+    	SalleEnnemi.ajouterSalleBoss("C'est le Tiamat ! Sa puissance est démesuré ! Vous n'avez aucune chance !", ListeEnnemi.listeBoss.get(2));
     }
     
     void initialisationSalleObjet()
     {
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une épée rouillé ! (10)", ListeArme.listeArme.get(0));
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une dague rouillé ! (7)", ListeArme.listeArme.get(1));
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé un bâton ! (5)", ListeArme.listeArme.get(2));
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une épée en fer ! (12)", ListeArme.listeArme.get(3));
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une épée pourfendeuse ! (16)", ListeArme.listeArme.get(4));
-    	SalleObjet.ajouterSalleObjet("Incroyable vous avez trouvé Excalibur ! (80)", ListeArme.listeArme.get(5));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée rouillé ! (10)", ListeArme.listeArme.get(0));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une dague rouillé ! (7)", ListeArme.listeArme.get(1));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé un bâton ! (5)", ListeArme.listeArme.get(2));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée en fer ! (12)", ListeArme.listeArme.get(3));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée en or ! (16)", ListeArme.listeArme.get(4));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée en titane ! (21)", ListeArme.listeArme.get(5));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée enchanté ! (27)", ListeArme.listeArme.get(6));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée suprême ! (36)", ListeArme.listeArme.get(7));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée en diamant ! (42)", ListeArme.listeArme.get(8));
+    	SalleObjet.ajouterSalleArme("Vous avez trouvé une épée pourfendeuse ! (64)", ListeArme.listeArme.get(9));
+    	SalleObjet.ajouterSalleArme("Incroyable vous avez trouvé Excalibur ! (80)", ListeArme.listeArme.get(10));
     	
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé un bouclier rouillé ! (3)", ListeBouclier.listeBouclier.get(0));
-     	SalleObjet.ajouterSalleObjet("Vous avez trouvé un bouclier en bois ! (2)", ListeBouclier.listeBouclier.get(1));
-     	SalleObjet.ajouterSalleObjet("Vous avez trouvé un bouclier tonneau ! (1)", ListeBouclier.listeBouclier.get(2));
-     	SalleObjet.ajouterSalleObjet("Vous avez trouvé un bouclier en fer ! (4)", ListeBouclier.listeBouclier.get(3));
-     	SalleObjet.ajouterSalleObjet("Vous avez trouvé un bouclier purificateur ! (5)", ListeBouclier.listeBouclier.get(4));
-     	SalleObjet.ajouterSalleObjet("Incroyable vous avez trouvé le Bouclier D'Egide ! (6)", ListeBouclier.listeBouclier.get(5));
+    	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier rouillé ! (3)", ListeBouclier.listeBouclier.get(0));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier en bois ! (2)", ListeBouclier.listeBouclier.get(1));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier tonneau ! (1)", ListeBouclier.listeBouclier.get(2));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier en fer ! (4)", ListeBouclier.listeBouclier.get(3));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier en or ! (5)", ListeBouclier.listeBouclier.get(4));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier en titane ! (6)", ListeBouclier.listeBouclier.get(5));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier duprême ! (7)", ListeBouclier.listeBouclier.get(6));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier en diamant ! (8)", ListeBouclier.listeBouclier.get(7));
+     	SalleObjet.ajouterSalleBouclier("Vous avez trouvé un bouclier purificateur ! (9)", ListeBouclier.listeBouclier.get(8));
+     	SalleObjet.ajouterSalleBouclier("Incroyable vous avez trouvé le Bouclier D'Egide ! (10)", ListeBouclier.listeBouclier.get(9));
      	
-       	SalleObjet.ajouterSalleObjet("Vous avez trouvé un sort boule de feu ! (15)", ListeSort.listeSort.get(0));
-       	SalleObjet.ajouterSalleObjet("Vous avez trouvé un sort stalactite ! (12)", ListeSort.listeSort.get(1));
-       	SalleObjet.ajouterSalleObjet("Vous avez trouvé un sort prout ! (8)", ListeSort.listeSort.get(2));
-       	SalleObjet.ajouterSalleObjet("Vous avez trouvé un sort lame spectrale ! (16)", ListeSort.listeSort.get(3));
-       	SalleObjet.ajouterSalleObjet("Vous avez trouvé un sort rayon saint ! (24)", ListeSort.listeSort.get(4));
-       	SalleObjet.ajouterSalleObjet("Incroyable vous avez trouvé le sort Extermination ! (100)", ListeSort.listeSort.get(5));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort boule de feu ! (15)", ListeSort.listeSort.get(0));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort stalactite ! (12)", ListeSort.listeSort.get(1));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort prout ! (8)", ListeSort.listeSort.get(2));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort lame spectrale ! (16)", ListeSort.listeSort.get(3));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort rayon saint ! (24)", ListeSort.listeSort.get(4));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort explosion ! (31)", ListeSort.listeSort.get(5));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort kill ! (38)", ListeSort.listeSort.get(6));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort glaciation ! (46)", ListeSort.listeSort.get(7));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort abîme ! (57)", ListeSort.listeSort.get(8));
+       	SalleObjet.ajouterSalleSort("Vous avez trouvé un sort feu sacré ! (76)", ListeSort.listeSort.get(9));
+       	SalleObjet.ajouterSalleSort("Incroyable vous avez trouvé le sort Extermination ! (100)", ListeSort.listeSort.get(10));
        	
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une potion de soin ! (10)", ListePotion.listePotion.get(0));
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une potion de degat ! (20)", ListePotion.listePotion.get(1));
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une potion de soin ultime ! (20)", ListePotion.listePotion.get(2));
-    	SalleObjet.ajouterSalleObjet("Vous avez trouvé une potion d'explosion ! (30)", ListePotion.listePotion.get(3));
-    	SalleObjet.ajouterSalleObjet("Incroyable vous avez trouvé une potion d'anihilation ! (150)", ListePotion.listePotion.get(4));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une potion de soin ! (10)", ListePotion.listePotion.get(0));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une potion de degat ! (20)", ListePotion.listePotion.get(1));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une grande potion de soin ! (20)", ListePotion.listePotion.get(2));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une potion d'explosion ! (30)", ListePotion.listePotion.get(3));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une gigantesque potion de soin ! (30)", ListePotion.listePotion.get(4));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une potion de purification ! (70)", ListePotion.listePotion.get(5));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une potion de soin ultime ! (50)", ListePotion.listePotion.get(6));
+    	SalleObjet.ajouterSallePotion("Vous avez trouvé une potion sacré ! (110)", ListePotion.listePotion.get(7));
+    	SalleObjet.ajouterSallePotion("Incroyable vous avez trouvé une potion d'anihilation ! (150)", ListePotion.listePotion.get(8));
     }
     
     void initialisationSalleEvenement()
@@ -178,8 +254,13 @@ public class GameManager{
     {
     	do
     	{        	
-    		System.out.println("Choisissez NewGame ou Quittez (vous pouvez quittez a tout moment), vous pourrez utiliser Menu a tout moment pour revenir au menu");
-
+    		System.out.println("NewGame - Commencer une nouvelle partie");
+    		if (listePersonnage.size() > 0)
+    		{
+        		System.out.println("Continuer - Continuer la partie en cours");
+    		}
+    		System.out.println("Quittez - Quittez le jeu. (Utilisable en cours de partie pour quitter le jeu");
+    		System.out.println("Menu - Utilisable en cours de partie pour revenir au menu");
             String value = sc.nextLine();
             
             if (value == null)
@@ -189,15 +270,43 @@ public class GameManager{
             
             if (value.startsWith("NewGame"))
             {
+            	if (listePersonnage.size() > 0)
+            	{
+            		estNewGame = true;
+                    do
+                    {
+                        try {
+                        	validationNouvellePartie();
+                		} catch (EntreeInvalideException e) {
+               			     System.out.println(e);
+                		}
+                    }
+                    while(estNewGame);
+            	}
+            	else
+            	{
+                    do
+                    {
+                        try {
+                            choixClasse();
+                		} catch (EntreeInvalideException e) {
+               			     System.out.println(e);
+                		}
+                    }
+                    while(estChoixClasse);
+            	}
+            }
+            else if (value.startsWith("Continuer") && listePersonnage.size() > 0) 
+            {
                 do
                 {
                     try {
-                        choixClasse();
+                        avantPartie();
             		} catch (EntreeInvalideException e) {
-           			     System.out.println(e);
+            			 System.out.println(e);
             		}
                 }
-                while(estChoixClasse);
+                while(estAvantPartie);
             }
             else if (value.startsWith("Quittez"))
             {
@@ -248,8 +357,9 @@ public class GameManager{
 	          	{
 	          		if (value.startsWith("Commencer " + (i + 1)))
 	          		{
+	    	        	initialisationDonjon();
 	    	        	jeu(listePersonnage.get(i));
-	        			return;
+	          			return;
 	          		}
 	          	}
             	throw new EntreeInvalideException("Entrée invalide");
@@ -279,12 +389,19 @@ public class GameManager{
 	          		if (value.startsWith("Info " + (i + 1)))
 	        		{
 	          			listePersonnage.get(i).montrerStat();
-	        			return;
+	          			return;
 	        		}
 	        		else if (value.startsWith("Supprimer " + (i + 1)))
 	        		{
-	        			listePersonnage.get(i);
-	        			return;
+	                    try {
+	                        BaseDeDonnee.deleteHero(listePersonnage.get(i));                 
+	                	}catch (ClassNotFoundException e){
+	                		e.printStackTrace();
+	                	}catch (SQLException e){
+	                		e.printStackTrace();
+	                    }
+	        			listePersonnage.remove(i);
+	          			return;
 	        		}
 	        		else if (value.startsWith("Modifier " + (i + 1)))
 	        		{
@@ -292,12 +409,129 @@ public class GameManager{
 	                    System.out.println("Choisissez un autre nom? ");
 	                    String name = sc.nextLine();                  
 	                    listePersonnage.get(i).setNom(name);
-	        			return;
+	                
+	                    try {
+	                    	BaseDeDonnee.updateHero(listePersonnage.get(i));;                
+	                	}catch (ClassNotFoundException e){
+	                		e.printStackTrace();
+	                	}catch (SQLException e){
+	                		e.printStackTrace();
+	                    }
+	          			return;
 	        		}
 	          	}
             	throw new EntreeInvalideException("Entrée invalide");
 	        }
     	}while(!hasReqExit && estAvantPartie);     
+    }
+    
+    void initialisationDonjon()
+    {
+    	JSONObject jsonObject = null;
+        try {     
+            jsonObject =  (JSONObject) new JSONTokener(new FileReader("src/fichierJson/donjonFacile.json")).nextValue();                               
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        JSONArray salleVide = (JSONArray) jsonObject.get("salleVide");
+        
+        for (int i = 0; i < salleVide.length(); i++)
+        {
+            listeSalleVide.add(SalleVide.listeSalleVide.get(salleVide.optInt(i)));
+        }  
+        
+        JSONArray salleEnnemi = (JSONArray) jsonObject.get("salleEnnemi");
+        
+        for (int i = 0; i < salleEnnemi.length(); i++)
+        {
+            listeSalleEnnemi.add(SalleEnnemi.listeSalleEnnemi.get(salleEnnemi.optInt(i)));
+        }  
+        
+        JSONArray salleBoss = (JSONArray) jsonObject.get("boss");
+        
+        for (int i = 0; i < salleBoss.length(); i++)
+        {
+            listeSalleBoss.add(SalleEnnemi.listeSalleBoss.get(salleBoss.optInt(i)));
+        }  
+        
+        JSONArray salleArme = (JSONArray) jsonObject.get("salleArme");
+        
+        for (int i = 0; i < salleArme.length(); i++)
+        {
+            listeSalleObjet.add(SalleObjet.listeSalleArme.get(salleArme.optInt(i)));
+        }  
+        
+        JSONArray salleBouclier = (JSONArray) jsonObject.get("salleBouclier");
+        
+        for (int i = 0; i < salleBouclier.length(); i++)
+        {
+            listeSalleObjet.add(SalleObjet.listeSalleBouclier.get(salleBouclier.optInt(i)));
+        } 
+        
+        JSONArray salleSort = (JSONArray) jsonObject.get("salleSort");
+        
+        for (int i = 0; i < salleSort.length(); i++)
+        {
+            listeSalleObjet.add(SalleObjet.listeSalleSort.get(salleSort.optInt(i)));
+        } 
+        
+        JSONArray sallePotion = (JSONArray) jsonObject.get("sallePotion");
+        
+        for (int i = 0; i < sallePotion.length(); i++)
+        {
+            listeSalleObjet.add(SalleObjet.listeSallePotion.get(sallePotion.optInt(i)));
+        } 
+        
+        JSONArray salleEvenement = (JSONArray) jsonObject.get("salleEvenement");
+        
+        for (int i = 0; i < salleEvenement.length(); i++)
+        {
+            listeSalleEvenement.add(SalleEvenement.listeSalleEvenement.get(salleEnnemi.optInt(i)));
+        }  
+    }
+    
+    void validationNouvellePartie() throws EntreeInvalideException
+    {
+        System.out.println("");
+        System.out.println("Etes vous sur de vouloir recommencer une partie ?");
+        System.out.println("Toute votre progression sera supprimer !");
+        System.out.println("Oui - Recommencer une nouvelle partie");
+        System.out.println("Non - J'ai changé d'avis");
+        
+        String value = sc.nextLine();  
+        
+        if (value.startsWith("Oui"))
+        {
+            try {
+            	BaseDeDonnee.deleteAllHeros();                
+        	}catch (ClassNotFoundException e){
+        		e.printStackTrace();
+        	}catch (SQLException e){
+        		e.printStackTrace();
+            }
+            
+            listePersonnage = new ArrayList<>();
+    		estNewGame = false;
+        }
+        else if (value.startsWith("Non"))
+        {
+    		estNewGame = false;
+        	return;
+        }
+        else if (value.startsWith("Menu"))
+        {
+    		estNewGame = false;
+            return;
+        }
+        else if (value.startsWith("Quittez"))
+        {
+            quittez();
+        }
+        else
+        {
+        	throw new EntreeInvalideException("Entrée invalide");
+        }
     }
 
     void choixClasse () throws IllegalStateException, EntreeInvalideException
@@ -436,6 +670,17 @@ public class GameManager{
             }
     	}while(!hasReqExit);    
     }
+    
+    void sauvegarde(Personnage perso)
+    {
+        try {
+        	BaseDeDonnee.updateHero(perso);;                
+    	}catch (ClassNotFoundException e){
+    		e.printStackTrace();
+    	}catch (SQLException e){
+    		e.printStackTrace();
+        }
+    }
 
     void quittez ()
     {
@@ -448,6 +693,7 @@ public class GameManager{
         estPartie = false;
         estDansSalle = false;
         salleSelectionne = false;
+		estNewGame = false;
     }
     
     void jeu(Personnage perso) throws IllegalStateException
@@ -625,30 +871,29 @@ public class GameManager{
         {
             estDansSalle = false;
             salleSelectionne = false;
-        	return;
         }
         else if (value.startsWith("Fuir"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
-        	return;
         }
         else if (value.startsWith("Info"))
         {
         	perso.montrerStat();
-        	return;
         }
         else if (value.startsWith("Quittez"))
         {
+        	sauvegarde(perso);
         	quittez();
         }
         else if (value.startsWith("Menu"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
-        	return;
         }
         else
         {
@@ -660,12 +905,12 @@ public class GameManager{
     {
     	if (!salleSelectionne)
     	{
-            int max = SalleEnnemi.listeSalleEnnemi.size() -1;
+            int max = listeSalleEnnemi.size() -1;
             int min = 0;
             int range = (max - min) + 1;
             nbSalleActuelle = (int)((Math.random() * range) + min);
             
-            salleEnnemi = SalleEnnemi.listeSalleEnnemi.get(nbSalleActuelle);
+            salleEnnemi = listeSalleEnnemi.get(nbSalleActuelle);
             Ennemi ennemiPrefab = salleEnnemi.getEnnemi();
             
             ennemiActuelle.setNom(ennemiPrefab.getNom());
@@ -716,7 +961,6 @@ public class GameManager{
            			 System.out.println(e);
            		}
     		} while (!ennemiVaincu);   
-        	return;
         }
         else if (value.startsWith("Potion") && perso instanceof Magicien && ((Magicien) perso).getPotion() != null && !((Magicien) perso).getPotionEstDegat())
         {
@@ -734,30 +978,29 @@ public class GameManager{
                 estDansSalle = false;
                 salleSelectionne = false;
         	}
-        	return;
         }
         else if (value.startsWith("Fuir"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
-        	return;
         }
         else if (value.startsWith("Info"))
         {
         	perso.montrerStat();
-        	return;
         }
         else if (value.startsWith("Quittez"))
         {
+        	sauvegarde(perso);
         	quittez();
         }
         else if (value.startsWith("Menu"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
-        	return;
         }
         else
         {
@@ -769,14 +1012,14 @@ public class GameManager{
     {   
     	if (!salleSelectionne)
     	{
-            int max = SalleObjet.listeSalleObjet.size() -1;
+            int max = listeSalleObjet.size() -1;
             int min = 0;
             int range = (max - min) + 1;
             nbSalleActuelle = (int)((Math.random() * range) + min);
             salleSelectionne = true;
     	}
      
-        SalleObjet salleObjet = SalleObjet.listeSalleObjet.get(nbSalleActuelle);
+        SalleObjet salleObjet = listeSalleObjet.get(nbSalleActuelle);
         Equipement equipement = salleObjet.getEquipement();
 		    
         System.out.println("");
@@ -814,7 +1057,6 @@ public class GameManager{
         {
         	objetDisponible = false;
         	perso.useEquipement(equipement);
-        	return;
         }
         else if (value.startsWith("Potion") && perso instanceof Magicien && ((Magicien) perso).getPotion() != null && !((Magicien) perso).getPotionEstDegat())
         {
@@ -824,30 +1066,29 @@ public class GameManager{
         {
             estDansSalle = false;
             salleSelectionne = false;
-        	return;
         }
         else if (value.startsWith("Fuir"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
-        	return;
         }
         else if (value.startsWith("Info"))
         {
         	perso.montrerStat();
-        	return;
         }
         else if (value.startsWith("Quittez"))
         {
+        	sauvegarde(perso);
         	quittez();
         }
         else if (value.startsWith("Menu"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
-        	return;
         }
         else
         {
@@ -859,14 +1100,14 @@ public class GameManager{
     {
     	if (!salleSelectionne)
     	{
-            int max = SalleEvenement.listeSalleEvenement.size() -1;
+            int max = listeSalleEvenement.size() -1;
             int min = 0;
             int range = (max - min) + 1;
             nbSalleActuelle = (int)((Math.random() * range) + min);
             salleSelectionne = true;
     	}
     	
-        SalleEvenement salleEvenement = SalleEvenement.listeSalleEvenement.get(nbSalleActuelle);
+        SalleEvenement salleEvenement = listeSalleEvenement.get(nbSalleActuelle);
 		    
         System.out.println("");
         System.out.println(salleEvenement.getMessageSalle());
@@ -890,6 +1131,7 @@ public class GameManager{
         {
             System.out.println("Potion - Utiliser votre potion");    
         }
+       
         if (perso.getHp() > 0)
         {
             System.out.println("Avancer - Avancer à la salle suivante");
@@ -913,7 +1155,6 @@ public class GameManager{
             		perso.augmentationHpMax(salleEvenement.getPuissance());
             	}
             	evenementUtiliser = true;
-            	return;
             }
             else if (value.startsWith("Potion") && perso instanceof Magicien && ((Magicien) perso).getPotion() != null && !((Magicien) perso).getPotionEstDegat())
             {
@@ -923,26 +1164,26 @@ public class GameManager{
             {
                 estDansSalle = false;
                 salleSelectionne = false;
-            	return;
             }
             else if (value.startsWith("Fuir"))
             {
+            	sauvegarde(perso);
                 estDansSalle = false;
             	estPartie = false;
                 salleSelectionne = false;
-            	return;
             }
             else if (value.startsWith("Info"))
             {
             	perso.montrerStat();
-            	return;
             }
             else if (value.startsWith("Quittez"))
             {
+            	sauvegarde(perso);
             	quittez();
             }
             else if (value.startsWith("Menu"))
             {
+            	sauvegarde(perso);
                 estDansSalle = false;
             	estPartie = false;
                 salleSelectionne = false;
@@ -952,19 +1193,36 @@ public class GameManager{
             {
             	throw new EntreeInvalideException("Entrée invalide");
             }
-        }    
+        }
+        else
+        {
+            System.out.println("Vous n'avez pas survécu !");
+            
+            estDansSalle = false;
+        	estPartie = false;
+            salleSelectionne = false;
+            
+            try {
+                BaseDeDonnee.deleteHero(perso);                 
+        	}catch (ClassNotFoundException e){
+        		e.printStackTrace();
+        	}catch (SQLException e){
+        		e.printStackTrace();
+            }
+			listePersonnage.remove(perso);
+        }
     }
     
     void salleBoss(Personnage perso) throws IllegalStateException, EntreeInvalideException
     {
     	if (!salleSelectionne)
     	{
-            int max = SalleEnnemi.listeSalleBoss.size() -1;
+            int max = listeSalleBoss.size() -1;
             int min = 0;
             int range = (max - min) + 1;
             nbSalleActuelle = (int)((Math.random() * range) + min);
             
-            salleEnnemi = SalleEnnemi.listeSalleBoss.get(nbSalleActuelle);
+            salleEnnemi = listeSalleBoss.get(nbSalleActuelle);
             Ennemi ennemiPrefab = salleEnnemi.getEnnemi();
             
             ennemiActuelle.setNom(ennemiPrefab.getNom());
@@ -1045,6 +1303,7 @@ public class GameManager{
         }
         else if (value.startsWith("Fuir"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
@@ -1055,10 +1314,12 @@ public class GameManager{
         }
         else if (value.startsWith("Quittez"))
         {
+        	sauvegarde(perso);
         	quittez();
         }
         else if (value.startsWith("Menu"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
@@ -1098,23 +1359,22 @@ public class GameManager{
         else if (value.startsWith("Info"))
         {
         	perso.montrerStat();
-        	return;
         }
         else if (value.startsWith("Ennemi"))
         {
         	ennemi.montrerStat();
-        	return;
         }
         else if (value.startsWith("Quittez"))
         {
+        	sauvegarde(perso);
         	quittez();
         }
         else if (value.startsWith("Menu"))
         {
+        	sauvegarde(perso);
             estDansSalle = false;
         	estPartie = false;
             salleSelectionne = false;
-        	return;
         }
         else
         {
@@ -1139,6 +1399,16 @@ public class GameManager{
         		if (perso.subirDegat(ennemi.getDegat()))
         		{
                     System.out.println("Vous n'avez pas survécu !");
+                    
+                    try {
+                        BaseDeDonnee.deleteHero(perso);                 
+                	}catch (ClassNotFoundException e){
+                		e.printStackTrace();
+                	}catch (SQLException e){
+                		e.printStackTrace();
+                    }
+        			listePersonnage.remove(perso);
+        			
                 	ennemiVaincu = true;
                     estDansSalle = false;
                 	estPartie = false;
@@ -1163,6 +1433,16 @@ public class GameManager{
         		if (perso.subirDegat(ennemi.getDegat()))
         		{
                     System.out.println("Vous n'avez pas survécu !");
+                   
+                    try {
+                        BaseDeDonnee.deleteHero(perso);                 
+                	}catch (ClassNotFoundException e){
+                		e.printStackTrace();
+                	}catch (SQLException e){
+                		e.printStackTrace();
+                    }
+        			listePersonnage.remove(perso);
+        			
                 	ennemiVaincu = true;
                     estDansSalle = false;
                 	estPartie = false;
