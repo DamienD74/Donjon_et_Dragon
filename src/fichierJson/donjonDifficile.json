@@ -1,0 +1,12 @@
+{
+ "nombreSalle": "64",
+ "difficulte": "difficile",
+ "salleVide": ["0"],
+ "salleEnnemi": ["6", "7", "8", "9", "10", "11"],
+ "salleArme": ["6", "7", "8", "9", "10"],
+ "salleBouclier": ["5", "6" , "7", "8", "9"],
+ "salleSort": ["6", "7", "8", "9", "10"],
+ "sallePotion": ["2", "4", "5", "6", "7", "8"],
+ "salleEvenement": ["0", "1", "2", "3", "5"],
+ "boss": ["2"]
+}

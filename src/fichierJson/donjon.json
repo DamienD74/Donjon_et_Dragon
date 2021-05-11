@@ -1,0 +1,15 @@
+{
+"salleActuelle": "0",
+"nombreSalle": "10",
+"difficulte": "facile",
+"0":[{"salle": "salleEnnemi","nombre": "3"}],
+"1":[{"salle": "salleObjet","nombre": "8"}],
+"2":[{"salle": "salleEnnemi","nombre": "0"}],
+"3":[{"salle": "salleEnnemi","nombre": "0"}],
+"4":[{"salle": "salleVide","nombre": "0"}],
+"5":[{"salle": "salleEnnemi","nombre": "1"}],
+"6":[{"salle": "salleObjet","nombre": "15"}],
+"7":[{"salle": "salleObjet","nombre": "17"}],
+"8":[{"salle": "salleEvenement","nombre": "2"}],
+"9":[{"salle": "salleBoss","nombre": "0"}]
+}

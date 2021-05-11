@@ -1,4 +1,6 @@
 {
+ "nombreSalle": "10",
+ "difficulte": "facile",
  "salleVide": ["0"],
  "salleEnnemi": ["0", "1", "2", "3"],
  "salleArme": ["0", "1", "2", "3", "4", "5"],
